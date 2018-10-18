@@ -1,0 +1,16 @@
+{
+  "name": "apidoc",
+  "version": "1.0.0",
+  "description": "api doc",
+  "scripts": {
+    "gen-api": "spectacle api.yml -t ..\\apidoc -f api.html",
+    "validate-api": "swagger-tools validate -v api.yml",
+    "clean": "rimraf build"
+  },
+  "author": "OGIS-RI",
+  "license": "Ask https://xxxxx.com/",
+  "dependencies": {
+    "rimraf": "^2.6.2",
+    "spectacle-docs": "^1.0.5"
+  }
+}

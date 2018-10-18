@@ -1,0 +1,709 @@
+---
+swagger: '2.0'
+info:
+  license:
+    name: ATLAS-Things API License
+  contact:
+    email: contact@atlas-things.jp
+  title: ATLAS-Things API v1 リファレンス
+  version: v18.10
+  description: |
+    このページでは、ATLAS-Things APIの仕様詳細について記載しています。
+    
+    ---
+    #### **ATLAS-Things APIとは**
+
+    ATLAS-Things APIを使うことで、各種入出荷実績を記録・管理することができます。 
+    API機能として入出荷実績データの登録・削除・出力、ログ収集などを保持しています。
+    
+    ---
+    #### **ATLAS-Things APIご利用開始方法**
+
+    ATLAS-Things APIのご利用には、アカウント登録の申請が必要です。  
+    右記連絡先まで申請のご連絡をお願いします。
+    
+    ---
+    #### **API認証について**
+ 
+    APIの認証には、API Keyと<a href="https://jwt.io/">JWT(JSON Web Token)</a>を使用します。
+    
+    **JWTの生成方法**
+    
+    本サービスのアカウント登録後、クライアントごとにAPI KeyとAPI Secretを発行します。<br>
+    JWTの生成には、API Secretを使用します。
+    
+    JWTのペイロードとして、以下の形式のJSONオブジェクト(UTF-8)を生成します。
+    requestDateは、APIをリクエストしたシステム日時(ISO8601拡張形式の年月日時分秒までのUTC)を設定してください。<br>
+    JWTの有効期限は1分間なので、リクエストの都度、設定することをお勧めします。
+    
+    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 1em;">
+    {
+      'requestDate': '2019-03-01T11:20:52Z'
+    }
+    </pre>
+    
+    生成したペイロードをbase64urlエンコードし、API Secretを鍵にしてJWTを生成します。<br>
+    暗号化アルゴリズムは、HMAC SHA-256を指定してください。
+    
+    **C#の場合のJWTの実装例**
+    
+    .Net FrameworkのパッケージマネージャであるNuGetにアクセスして、System.IdentityModel.Tokens.Jwtをインストールします。
+    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 1em;">
+    using System;
+    using System.IdentityModel;
+    
+    class Example
+    {
+      // API Secret(本サービスのアカウント登録後に発行)
+      var apiSecret = "example-api-secret";
+      
+      // JWTを操作するクラスを用意
+      var handler = new JwtSecurityTokenHandler();
+      
+      // 共通鍵の生成
+      var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSecret));
+      
+      // 署名情報を生成(暗号化アルゴリズムはHMAC SHA-256を指定)
+      var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, "HS256");
+      
+      // JWTヘッダの生成
+      var header = new System.IdentityModel.Tokens.Jwt.JwtHeader(credentials);
+      
+      // ペイロードの生成
+      var payload = new System.IdentityModel.Tokens.Jwt.JwtPayload
+      {
+        { "requestDate", DateTime.UtcNow }
+      }
+      
+      // JWTの生成
+      var secToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(header, payload);
+      var jwt = handler.WriteToken(secToken);
+    }
+    </pre>
+    
+    <br />
+    **API認証に必要な情報**
+    
+    クライアントは、API KeyとJWTをリクエストに含めて送信することで、APIの認証をします。
+    
+    下記の表が、リクエストに含まれる認証情報です。<br>
+    X-ATLAS-API-KeyヘッダーとAuthorizationヘッダーを、全てのAPIのリクエストに必ず含めてください。
+
+    | parameters | in | data type | description |  
+    | ------ | ------ | ------ | ------ |   
+    | X-ATLAS-API-Key | header | string  | API Keyを設定するヘッダー |  
+    | Authorization | header | string  | JWTを設定するヘッダー |  
+    
+    
+    **API認証失敗時**
+    
+    認証に失敗した場合、エラー情報がクライアントに返ります。<br>
+    エラー情報を確認のうえ、正しい認証情報を設定して再度リクエストしてください。
+    
+    | HTTP status code | errorCode | detail |description |
+    | ------ | ------ | ------ | ------ |
+    | 401 Unauthorized | 800 | jwt is invalid. | JWTの有効期限切れ以外のエラー |
+    |  | 801 | jwt expired. | JWTの有効期限切れエラー |
+    
+    ---
+    #### **APIのリクエストについて**
+    各APIのリクエストは、すべての項目を含めて送信する必要があります。<br>
+    必須でない項目で設定が不要な場合は、値にNULLを設定してください。<br>
+    リクエストとして定義されている項目が存在しない場合、エラー情報が返ります。
+    
+
+host: api.atlas-things.io/
+schemes:
+  - https
+tags:
+  - name: Overview（概要）
+    description: |
+      Shipping（出荷）とReceiving（入荷）には、データを1件ずつ登録する『個別登録』のAPIと、まとめて登録する『一括登録』のAPIがあります。  
+      『個別登録』は、ハンディ端末などで読み取った都度データ登録を行うシーンなどを想定しています。  
+      『一括登録』は、ゲートを通過するパレットなどからまとめて登録を行うシーンなどを想定しています。  
+  - name: Shipping（出荷）
+    description: 出荷情報の個別登録と一括登録を提供します。
+  - name: Receiving（入荷）
+    description: 入荷情報の個別登録と一括登録を提供します。
+  - name: Others（その他）
+    description: データの削除と出力、クレデンシャル発行および無効化された追跡IDリスト出力を提供します。
+paths:
+  /shipping/item:
+    post:
+      summary: 出荷情報個別登録
+      tags:
+        - Shipping（出荷）
+      description: |
+        出荷実績データを1件づつ登録します。    
+        出荷実績データは、出荷先拠点で入荷実績データが上がるまでは登録可能です。  
+        （移動伝票番号に紐付く入荷実績の有無でバリデーションを実施しています。）
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            入荷済みチェックエラー (errorCode 201)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+            複数アイテム混入エラー (errorCode 203)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "登録対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/RegistrationRequest"
+            }
+  /shipping/items:
+    post:
+      summary: 出荷情報一括登録
+      tags:
+        - Shipping（出荷）
+      description: |
+        出荷実績データを一括で登録します。  
+        出荷実績データは、出荷先拠点で入荷実績データが上がるまでは登録可能です。  
+        （移動伝票番号に紐付く入荷実績の有無でバリデーションを実施しています。）
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            入荷済みチェックエラー (errorCode 201)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+            パス不一致エラー (errorCode 204)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "登録対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/RegistrationRequest"
+            }
+  /receiving/item:
+    post:
+      summary: 入荷情報個別登録
+      tags:
+        - Receiving（入荷）
+      description: |
+        入荷実績データを1件づつ登録します。  
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+            複数アイテム混入エラー (errorCode 203)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "登録対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/RegistrationRequest"
+            }
+  /receiving/items:
+    post:
+      summary: 入荷情報一括登録
+      tags:
+        - Receiving（入荷）
+      description: |
+        入荷実績データを一括で登録します。
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+            パス不一致エラー (errorCode 204)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "登録対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/RegistrationRequest"
+            }
+  /shipping/items/delete:
+    post:
+      summary: 出荷情報削除
+      tags:
+        - Others（その他）
+      description: "指定された格納パスの出荷実績データを削除します。"
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            入荷済みチェックエラー (errorCode 201)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "削除対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/DeleteRequest"
+            }
+  /receiving/items/delete:
+    post:
+      summary: 入荷情報削除
+      tags:
+        - Others（その他）
+      description: "指定された格納パスの入荷実績データを削除します。"
+      responses:
+        204:
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+            重複リクエスト登録エラー (errorCode 200)  
+            他拠点入出荷データ更新不可エラー (errorCode 202)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "file"
+          in: "body"
+          description: "削除対象のリクエスト情報"
+          required: true
+          schema: {
+            $ref: "#/definitions/DeleteRequest"
+            }
+  /items/download:
+    get:
+      summary: 出荷実績データ出力
+      tags:
+        - Others（その他）
+      description: |
+        リクエストされたテナントの出荷実績データ出力ファイルのダウンロード用のURLを返却します。  
+        パラメータ:cursor無しの場合は、直近90日分のデータを返却します。
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/TagData"
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: |
+            入力チェックエラー (errorCode 100)  
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+      parameters:
+        - name: "cursor"
+          in: "query"
+          description: "今回出力ポイントのカーソル情報"
+          required: false
+          type: "string"
+  /log/credentials:
+    get:
+      summary: クレデンシャル発行
+      tags:
+        - Others（その他）
+      description: |
+        ログアップロードに使用するクレデンシャルを取得します。  
+        AWS SDKを使用して、所定のS3バケットにログファイルをアップロードします。  
+        （参考： https://aws.amazon.com/jp/sdk-for-net/ ）
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/Credentials"
+          description: "成功時"
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)  "
+  /inactivetrackingids/download:
+    get:
+      summary: 無効追跡IDリスト出力
+      tags:
+        - Others（その他）
+      description: |
+        無効化された追跡IDリストデータダウンロード用URLを返却します。  
+        パラメータ:cursor無しの場合は、直近90日分のデータを返却します。
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/InactivetrackingIds"
+          description: "成功時"
+        400:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "入力チェックエラー (errorCode 100)"
+        500:
+          schema:
+            $ref: "#/definitions/ProblemDetails"
+          description: "システムエラー (errorCode 900)"
+      parameters:
+        - name: "cursor"
+          in: "query"
+          description: "今回出力ポイントのカーソル情報"
+          required: false
+          type: "string"
+definitions:
+  TagData:
+    type: "object"
+    description: "出荷実績データの情報"
+    properties:
+      urls:
+        type: "array"
+        description: |
+          出荷実績データダウンロード用のURLリスト  
+          URLがない場合は、空のリストが返されます。
+        items:
+          type: "string"
+          description: "出荷実績データダウンロード用のURL"
+      cursor:
+        type: "string"
+        description: "次回API呼び出し時のカーソル情報"
+      hasNext:
+        type: "boolean"
+        description: "次データ有無"
+    example:
+      urls: 
+        - https://s3-ap-northeast-1.amazonaws.com/backet01/file01
+        - https://s3-ap-northeast-1.amazonaws.com/backet01/file02
+      cursor: "ew0K4oCdcHJldmlvdXNQcm9jZXNzVHlwZeKAnToxMjM1NjcsDQoicmVxdWVzdERhdGV0aW1lIjoiMjAxOC0wNi0wNVQwNDo1MDo0MFoiLA0KInByZXZpb3VzSUQiOjEyMzQ1LA0KImxhc3RFdmFsdWF0ZWRLZXkiOnsia2V5IjoxMjM0NTZ9DQp9DQoNCiA="
+      hasNext: false
+  InvalidParam:
+    type: "object"
+    required:
+      - name
+      - reason
+    description: "不正なパラメータの情報\n
+                  \n \n
+                  \n | name | reason | value of place holder |
+                  \n | ------ | ------ | ------ |
+                  \n | ※エラー項目名 | must be required. | - |
+                  \n | ※エラー項目名 | digit must be greater than or equal to {0} and less than or equal to {1}. | {0}：下限桁数、{1}：上限桁数 |
+                  \n | ※エラー項目名 | a non-alphabetic character was found. | - |
+                  \n | ※エラー項目名 | a non-numerical charcter was found. | - |
+                  \n | ※エラー項目名 | a non-alphanumeric character was found. | - |
+                  \n | ※エラー項目名 | invalid format. | - |
+                  \n \n"
+    properties:
+      name:
+        type: "string"
+        description: "パラメータの名前"
+      reason:
+        type: "string"
+        description: "理由"
+  ProblemDetails:
+    type: "object"
+    required:
+      - title
+      - errorCode
+      - detail
+      - traceId
+      - invalidParams
+    description: "問題の詳細情報\n
+                 \n
+                  \n \n
+                  \n | HTTP status code | エラー内容 | errorCode | detail |
+                  \n | ------ | ------ | ------ | ------ |
+                  \n | 400 BadRequest | 入力チェックエラー | 100 | invalid input value. |
+                  \n |  | 重複リクエスト登録エラー | 200 | the transactionId={0} has already been registered. |
+                  \n |  | 入荷済みチェックエラー | 201 | the data has already been received at the next base. |
+                  \n |  | 他拠点入出荷データ更新不可エラー | 202 | the data of other bases can not be updated. [ movementType={0} , processType={1} ] |
+                  \n |  | 複数アイテム混入エラー | 203 | there can be only one item in this request. |
+                  \n |  | パス不一致エラー | 204 | item's path and targetPath inconsistency error. |
+                  \n |  | リクエストサイズエラー | 205 | request is too large. |
+                  \n | 401 Unauthorized | JWTの有効期限切れ以外のエラー | 800 | jwt is invalid. |
+                  \n |  | JWTの有効期限切れエラー | 801 | jwt expired. |
+                  \n | 404 NotFound | リソース不存在エラー | 802 | resource not found. |
+                  \n | 429 Throttled | スロットリングエラー | 803 | request is too many. |
+                  \n | 500 InternalServerError | システムエラー | 900 | internal error has occurred. please call API in a little while. |
+                  \n | 503 ServiceUnavailable | サービス停止エラー | 901 | system maintenance. |
+                  \n \n
+                 ※APIのエンドポイントが正しくない場合、HTTP status codeは403(Forbidden)になります。<br>  
+                 　その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>  
+                    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+                    HTTP status code 403 <br>
+                    {
+                        'message': 'Forbidden'
+                     }
+                    </pre>"
+    properties:
+      title:
+        type: "string"
+        description: "タイトル"
+      errorCode:
+        type: "integer"
+        format: "int32"
+        description: "ステータスコード"
+      detail:
+        type: "string"
+        description: "詳細情報"
+      traceId:
+        type: "string"
+        description: "リクエスト追跡ID"
+      invalidParams:
+        type: "array"
+        items:
+          $ref: "#/definitions/InvalidParam"
+          description: |
+            不正なパラメータの情報  
+            不正なパラメータの情報がない場合は、この項目は空のリストが返ります。
+  Item:
+    type: object
+    description: "アイテムの情報"
+    properties:
+      trackingId:
+        type: "string"
+        description: "追跡ID"
+      uid:
+        type: "string"
+        description: "UID"
+      autoIdType:
+        type: "string"
+        description: "自動認識タイプ"
+      path:
+        type: "string"
+        description: |
+           格納パス  
+           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
+      itemCount:
+        type: "int32"
+        description: "アイテム数"
+      movedDateTime:
+        type: "string"
+        description: |
+          移動実績日時  
+            ISO8601拡張形式（UTC）にマイクロ秒（６桁）を加えたものを設定してください。  
+            （YYYY-MM-DDThh:mm:ss.ffffffZ） 
+                       
+            | key | value |
+            | ------ | ------ |
+            | YYYY | 西暦４桁 |
+            | MM | 月で 01 から 12 の値をとる。 |
+            | DD | 日で 01 から 31 の値をとる。 |
+            | hh | 時間で 00 から 24 の値をとる。 | 
+            | mm | 分で 00 から 59 の値をとる。 |
+            | ss | 秒で 00 から 59 及び閏秒に 60 の値をとる。 | 
+            | ffffff | マイクロ秒で 000000 から 999999 の値をとる。 |             
+      individualRecognitionCode:
+        type: "string"
+        description: "個品識別コード"
+      largeClassAggregationKey:
+        type: "string"
+        description: "大分類 集計キー"
+      middleClassAggregationKey:
+        type: "string"
+        description: "中分類 集計キー"
+      smallClassAggregationKey:
+        type: "string"
+        description: "小分類 集計キー"
+      isInactivated:
+        type: "boolean"
+        description: "無効化フラグ"
+      autoInactive:
+        type: "object"
+        description: "自動無効化"
+        properties:
+          isAutoInactivated:
+            type: "boolean"
+            description: "自動無効化対象フラグ"
+          targetParentPath:
+            type: "string"
+            description: "自動無効化対象パス"
+          elapsedDays:
+            type: "int32"
+            description: "自動無効化経過日数"
+        required:
+          - isAutoInactivated  
+    required:
+        - trackingId
+        - autoIdType
+        - path
+        - itemCount
+        - movedDateTime
+        - largeClassAggregationKey
+        - middleClassAggregationKey
+        - smallClassAggregationKey
+        - autoInactive
+    example:
+      trackingId: "000901000000000000040000-001"
+      uid: "000901000000000000040000"
+      autoIdType: "exampleType"
+      path: "/Ship001/Cont001/Pallet001/000901000000000000040000-001/"
+      itemCount: 20
+      movedDateTime: "2019-06-26T04:37:20.399908Z"
+      individualRecognitionCode: "00084"
+      largeClassAggregationKey: "supplier case"
+      middleClassAggregationKey: "case type"
+      smallClassAggregationKey: "case size"
+      isInactivated: false
+      autoInactive: 
+        isAutoInactivated: true
+        targetParentPath: "/Ship001/Cont001/Pallet001/"
+        elapsedDays: 5
+      
+  RegistrationRequest:
+    type: object
+    description: "登録のリクエスト"
+    properties:
+      transactionId:
+        type: "string"
+        description: |
+          トランザクションID  
+          クライアントからのリクエストを識別するためのID。  
+          1リクエスト毎に一意となる値を設定してください。  
+          ※ 推奨値：UUID
+      movementSlipNo:
+        type: "string"
+        description: "移動伝票番号"
+      baseId:
+        type: "string"
+        description: "拠点ID"
+      counterBaseId:
+        type: "string"
+        description: "対向拠点ID"
+      targetPath:
+        type: "string"
+        description: |
+          データ処理対象  
+          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  
+          指定された格納パスに対して、上書き登録を行います。  
+          （当該格納パスデータを削除の上、今回リクエストデータを登録します。）    
+          ※ 一括登録の場合は必須です。
+      items:
+        type: "array"
+        items:
+          $ref: "#/definitions/Item"
+        description: |
+          アイテムリスト  
+          ※ 個別登録の場合はアイテムを2つ以上設定すると、複数アイテム混入エラー (errorCode 203)になります。  
+        required:
+          - movementType
+          - processType
+          - requestDate
+    required:
+        - transactionId
+        - movementSlipNo
+        - baseId
+        - counterBaseId
+        - items
+    example:
+      transactionId: "bf7d0aa8-537c-4e4c-80a0-6b6451f59abb"
+      movementSlipNo: "78964456306232651242"
+      baseId: "2114dbec-a137-11e8-9a80-ec21e50b3736"
+      counterBaseId: "458435f8-2e5c-444b-b828-6f25f35f3a40"
+      targetPath: "/111/222/333/"
+      items: [{"trackingId":"000901000000000000040000-001","uid":"000901000000000000040000","autoIdType": "exampleType","path":"/Ship001/Cont001/Pallet001/000901000000000000040000-001/", "itemCount":1,"movedDateTime":"2019-06-26T04:37:20.399908Z","individualRecognitionCode":"excampleCode","largeClassAggregationKey":"exampleLargeKey","middleClassAggregationKey":"exampleMiddleKey","smallClassAggregationKey":"exampleSmallKey","isInactivated":false,"autoInactive":{"isAutoInactivated":true,"targetParentPath":"/Ship001/Cont001/Pallet001/","elapsedDays":5}}]
+  DeleteRequest:
+    type: object
+    description: "削除のリクエスト"
+    properties:
+      transactionId:
+        type: "string"
+        description: |
+          トランザクションID  
+          クライアントからのリクエストを識別するためのID。  
+          1リクエスト毎に一意となる値を設定してください。  
+          ※ 推奨値：UUID
+      movementSlipNo:
+        type: "string"
+        description: "移動伝票番号"
+      targetPaths:
+        type: "array"
+        description: |
+          削除対象の格納位置情報リスト  
+          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  
+        items:
+          type: "string"
+          description: "削除対象の格納位置情報"
+    required:
+        - transactionId
+        - movementSlipNo
+        - targetPaths
+    example:
+      transactionId: "bf7d0aa8-537c-4e4c-80a0-6b6451f59abb"
+      movementSlipNo: "78964456306232651242"
+      targetPaths: ["/111/222/333/","/444/555/666/"]
+  Credentials:
+      type: "object"
+      description: "認証情報"
+      properties:
+        accessKeyId:
+          type: "string"
+          description: "アクセスキーID"
+        secretAccessKey:
+          type: "string"
+          description: "シークレットアクセスキー"
+        sessionToken:
+          type: "string"
+          description: "トークン"
+        expiration:
+          type: "string"
+          description: "有効期限"
+      example: 
+        accessKeyId: "M9DTMSG986WM59JPQ3CW"
+        secretAccessKey: "xtzwg/8m5G9yXb7jh9g2EF9/4t6izdBakbQJyD9x"
+        sessionToken: "abcd1234"
+        expiration: "2019-08-15T0412:42:13Z"
+  InactivetrackingIds:
+      type: "object"
+      description: "無効追跡IDリスト"
+      properties:
+        urls:
+          type: "array"
+          description: |
+            無効追跡IDリストダウンロード用のURLリスト   
+            URLがない場合は、空のリストが返されます。
+          items:
+            type: "string"
+            description: "無効追跡IDリストダウンロード用のURL"
+        cursor:
+          type: "string"
+          description: "差分データ抽出用のカーソル情報"
+        hasNext:
+          type: "boolean"
+          description: "次データ有無"
+      example: 
+        urls: ["https://s3-ap-northeast-1.amazonaws.com/backet01/file01","https://s3-ap-northeast-1.amazonaws.com/backet01/file02"]
+        cursor: "ew0K4oCdcHJldmlvdXNQcm9jZXNzVHlwZeKAnToxMjM1NjcsDQoicmVxdWVzdERhdGV0aW1lIjoiMjAxOC0wNi0wNVQwNDo1MDo0MFoiLA0KInByZXZpb3VzSUQiOjEyMzQ1LA0KImxhc3RFdmFsdWF0ZWRLZXkiOnsia2V5IjoxMjM0NTZ9DQp9DQoNCiA="
+        hasNext: false

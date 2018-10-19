@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "api doc",
   "scripts": {
-    "gen-api": "./build.sh",
+    "gen-api": "cp prerequisites/_layout.scss node_modules/spectacle-docs/app/stylesheets/ && spectacle api.yml",
     "validate-api": "swagger-tools validate -v api.yml",
     "clean": "rimraf build"
   },

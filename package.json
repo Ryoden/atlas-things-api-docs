@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "api doc",
   "scripts": {
-    "gen-api": "spectacle api.yml",
+    "gen-api": "./build.sh",
     "validate-api": "swagger-tools validate -v api.yml",
     "clean": "rimraf build"
   },

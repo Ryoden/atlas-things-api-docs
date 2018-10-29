@@ -72,7 +72,7 @@ info:
       // ペイロードの生成
       var payload = new System.IdentityModel.Tokens.Jwt.JwtPayload
       {
-        { "requestDate", DateTime.UtcNow }
+        { "requestDate", DateTime.UtcNow.ToString("u").Replace(" ","T") }
       }
       
       // JWTの生成
@@ -102,8 +102,9 @@ info:
     
     | HTTP status code | errorCode | detail |description |
     | ------ | ------ | ------ | ------ |
-    | 401 Unauthorized | 800 | jwt is invalid. | JWTの有効期限切れ以外のエラー |
+    | 401 Unauthorized | 800 | authorization failed. | その他の認証エラー |
     |  | 801 | jwt expired. | JWTの有効期限切れエラー |
+    |  | 804 | requestDate is invalid format. | JWTのリクエスト日時のフォーマットエラー |
     
     ---
     #### **APIのリクエストについて**
@@ -452,8 +453,9 @@ definitions:
                   \n |  | 複数アイテム混入エラー | 203 | there can be only one item in this request. |
                   \n |  | パス不一致エラー | 204 | item's path and targetPath inconsistency error. |
                   \n |  | リクエストサイズエラー | 205 | request is too large. |
-                  \n | 401 Unauthorized | JWTの有効期限切れ以外のエラー | 800 | jwt is invalid. |
+                  \n | 401 Unauthorized | その他の認証エラー | 800 | authorization failed. |
                   \n |  | JWTの有効期限切れエラー | 801 | jwt expired. |
+                  \n |  | JWTのリクエスト日時のフォーマットエラー | 804 | requestDate is invalid format. |
                   \n | 404 NotFound | リソース不存在エラー | 802 | resource not found. |
                   \n | 429 Throttled | スロットリングエラー | 803 | request is too many. |
                   \n | 500 InternalServerError | システムエラー | 900 | internal error has occurred. please call API in a little while. |

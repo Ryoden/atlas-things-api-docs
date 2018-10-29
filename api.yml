@@ -496,18 +496,30 @@ definitions:
     properties:
       trackingId:
         type: "string"
-        description: "追跡ID"
+        minLength: 1
+        maxLength: 36
+        format: ^[0-9A-Za-z\-]+$ 
+        description: "追跡ID"  
       uid:
         type: "string"
+        minLength: 1
+        maxLength: 124
+        format: ^[0-9A-F\-]+$ 
         description: "UID"
       autoIdType:
-        type: "string"
+        type: "string" 
+        minLength: 1
+        maxLength: 30
+        format: ^[0-9A-Za-z]+$  
         description: "自動認識タイプ"
       path:
         type: "string"
+        minLength: 1
+        maxLength: 600
+        format: ^[0-9A-Za-z\-\/]+$ 
         description: |
-           格納パス  
-           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
+          格納パス  
+          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
       itemCount:
         type: "int32"
         description: "アイテム数"
@@ -529,15 +541,23 @@ definitions:
             | ffffff | マイクロ秒で 000000 から 999999 の値をとる。 |             
       individualRecognitionCode:
         type: "string"
+        minLength: 1
+        maxLength: 150
         description: "個品識別コード"
       largeClassAggregationKey:
         type: "string"
-        description: "大分類 集計キー"
+        minLength: 1
+        maxLength: 50
+        description: "大分類 集計キー " 
       middleClassAggregationKey:
         type: "string"
+        minLength: 1
+        maxLength: 50
         description: "中分類 集計キー"
       smallClassAggregationKey:
         type: "string"
+        minLength: 1
+        maxLength: 50
         description: "小分類 集計キー"
       isInactivated:
         type: "boolean"
@@ -551,7 +571,12 @@ definitions:
             description: "自動無効化対象フラグ"
           targetParentPath:
             type: "string"
-            description: "自動無効化対象パス"
+            minLength: 1
+            maxLength: 600
+            format: /^[0-9A-Za-z\-\/]+$/ 
+            description: |
+              自動無効化対象パス   
+              自動無効化対象のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
           elapsedDays:
             type: "int32"
             description: "自動無効化経過日数"
@@ -590,6 +615,9 @@ definitions:
     properties:
       transactionId:
         type: "string"
+        minLength: 36
+        maxLength: 36
+        format: ^[0-9A-Za-z\-]+$ 
         description: |
           トランザクションID  
           クライアントからのリクエストを識別するためのID。  
@@ -597,17 +625,29 @@ definitions:
           ※ 推奨値：UUID
       movementSlipNo:
         type: "string"
+        minLength: 20
+        maxLength: 20
+        format: ^[0-9A-Za-z]+$ 
         description: "移動伝票番号"
       baseId:
         type: "string"
+        minLength: 36
+        maxLength: 36
+        format: ^[0-9A-Za-z\-]+$ 
         description: "拠点ID"
       counterBaseId:
         type: "string"
-        description: "対向拠点ID"
+        minLength: 36
+        maxLength: 36
+        format: ^[0-9A-Za-z\-]+$ 
+        description: "対向拠点ID"  
       targetPath:
         type: "string"
+        minLength: 1
+        maxLength: 600 
+        format: /^[0-9A-Za-z\-\/]+$/ 
         description: |
-          データ処理対象  
+          データ処理対象   
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  
           指定された格納パスに対して、上書き登録を行います。  
           （当該格納パスデータを削除の上、今回リクエストデータを登録します。）    
@@ -642,6 +682,9 @@ definitions:
     properties:
       transactionId:
         type: "string"
+        minLength: 36
+        maxLength: 36
+        format: ^[0-9A-Za-z\-]+$ 
         description: |
           トランザクションID  
           クライアントからのリクエストを識別するためのID。  
@@ -649,9 +692,15 @@ definitions:
           ※ 推奨値：UUID
       movementSlipNo:
         type: "string"
+        minLength: 20
+        maxLength: 20
+        format: ^[0-9A-Za-z]+$ 
         description: "移動伝票番号"
       targetPaths:
         type: "array"
+        minLength: 1
+        maxLength: 600
+        format: /^[0-9A-Za-z\-\/]+$/ 
         description: |
           削除対象の格納位置情報リスト  
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  

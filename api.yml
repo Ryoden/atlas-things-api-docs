@@ -475,7 +475,6 @@ definitions:
         description: "タイトル"
       errorCode:
         type: "integer"
-        format: "int32"
         description: "ステータスコード"
       detail:
         type: "string"
@@ -516,12 +515,11 @@ definitions:
         type: "string"
         minLength: 1
         maxLength: 600
-        format: ^[0-9A-Za-z\-\/]+$ 
         description: |
           格納パス  
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
       itemCount:
-        type: "int32"
+        type: "int64"
         description: "アイテム数"
       movedDateTime:
         type: "string"
@@ -572,13 +570,12 @@ definitions:
           targetParentPath:
             type: "string"
             minLength: 1
-            maxLength: 600
-            format: /^[0-9A-Za-z\-\/]+$/ 
+            maxLength: 600 
             description: |
               自動無効化対象パス   
               自動無効化対象のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
           elapsedDays:
-            type: "int32"
+            type: "int64"
             description: "自動無効化経過日数"
         required:
           - isAutoInactivated  
@@ -644,8 +641,7 @@ definitions:
       targetPath:
         type: "string"
         minLength: 1
-        maxLength: 600 
-        format: /^[0-9A-Za-z\-\/]+$/ 
+        maxLength: 600  
         description: |
           データ処理対象   
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  
@@ -699,8 +695,7 @@ definitions:
       targetPaths:
         type: "array"
         minLength: 1
-        maxLength: 600
-        format: /^[0-9A-Za-z\-\/]+$/ 
+        maxLength: 600 
         description: |
           削除対象の格納位置情報リスト  
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  

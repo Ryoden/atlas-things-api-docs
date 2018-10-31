@@ -551,24 +551,30 @@ definitions:
             | ffffff | マイクロ秒で 000000 から 999999 の値をとる。 |             
       individualRecognitionCode:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 150
         description: "個品識別コード"
       largeClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "大分類 集計キー " 
+        description: |
+          大分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       middleClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "中分類 集計キー"
+        description: |
+          中分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       smallClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "小分類 集計キー"
+        description: |
+          小分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       isInactivated:
         type: "boolean"
         description: "無効化フラグ"

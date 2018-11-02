@@ -322,7 +322,9 @@ paths:
         パラメータ:cursor無しの場合は、直近90日分のデータを返却します。
           
         レスポンスの取得後、ダウンロード用のURLにアクセスすることで、出荷実績データ出力ファイルを取得できます。<br>
-        アクセス時は、ATLAS-Things APIの認証用ヘッダー情報(X-ATLAS-API-KeyとAuthorization)を付けずにGETメソッドでアクセスしてください。
+        出荷実績データ出力ファイルのフォーマットはUTF-8のJSONファイルです。内容については、<a href="#/definitions/ActualShippingData">ActualShippingData</a>を参照してください。<br>
+        ダウンロード用のURLへのアクセス時は、ATLAS-Things APIの認証用ヘッダー情報(X-ATLAS-API-KeyとAuthorization)を付けずにGETメソッドでアクセスしてください。
+        
           
         また、ダウンロード用URLの有効期限は1時間です。<br> 
         有効期限が切れた場合はAccessDeniedのレスポンスが返るので、再度リクエストを送信してください。 
@@ -373,7 +375,8 @@ paths:
         無効化された追跡IDリストデータダウンロード用URLを返却します。  
         パラメータ:cursor無しの場合は、直近90日分のデータを返却します。 
           
-        レスポンスの取得後、ダウンロード用のURLにアクセスすることで、出荷実績データ出力ファイルを取得できます。<br>
+        レスポンスの取得後、ダウンロード用のURLにアクセスすることで、無効追跡IDリスト出力ファイルを取得できます。<br>
+        無効追跡IDリスト出力ファイルのフォーマットはUTF-8のJSONファイルです。内容については、<a href="#/definitions/InactiveTrackingIds">InactiveTrackingIds</a>を参照してください。<br>
         アクセス時は、ATLAS-Things APIの認証用ヘッダー情報(X-ATLAS-API-KeyとAuthorization)を付けずにGETメソッドでアクセスしてください。
           
         また、ダウンロード用URLの有効期限は1時間です。<br> 
@@ -381,7 +384,7 @@ paths:
       responses:
         200:
           schema:
-            $ref: "#/definitions/InactivetrackingIds"
+            $ref: "#/definitions/InactiveTrackingIdData"
           description: "成功時"
         400:
           schema:
@@ -422,6 +425,106 @@ definitions:
         - https://s3-ap-northeast-1.amazonaws.com/backet01/file02
       cursor: "ew0K4oCdcHJldmlvdXNQcm9jZXNzVHlwZeKAnToxMjM1NjcsDQoicmVxdWVzdERhdGV0aW1lIjoiMjAxOC0wNi0wNVQwNDo1MDo0MFoiLA0KInByZXZpb3VzSUQiOjEyMzQ1LA0KImxhc3RFdmFsdWF0ZWRLZXkiOnsia2V5IjoxMjM0NTZ9DQp9DQoNCiA="
       hasNext: false
+
+  ActualShippingData:
+    type: "object"
+    description: "出荷実績データの出力ファイルの情報"
+    properties:
+      actualShippingData:
+        type: "array"
+        description: |
+          出荷実績データのリスト  
+          データがない場合は、空のリストが返されます。
+        items:
+          $ref: "#/definitions/ActualShipping"
+          description: "出荷実績データの情報"
+    example:
+      actualShippingData: 
+        - {"tenantId":"e95k6suc-bkd9-87fu-aa0o-fs346b7ah5cu","movementSlipNo":"20181015000000000001","baseId":"2114dbec-a137-11e8-9a80-ec21e50b3736","counterBaseId":"458435f8-2e5c-444b-b828-6f25f35f3a40","items":[{"trackingId":"84FDDE3C-5EFA-474D-87AC-B77220683BD3","uid":"000901000000000000040001","autoIdType":"exampleType","path":"/Ship001/Cont001/Pallet001/84FDDE3C-5EFA-474D-87AC-B77220683BD3/","itemCount":1,"movedDateTime":"2018-09-20T11:19:52.909301Z","individualRecognitionCode":"individualRecognitionCode","largeClassAggregationKey":"largeClassAggregationKey","middleClassAggregationKey":"middleClassAggregationKey","smallClassAggregationKey":"smallClassAggregationKey"},{"trackingId":"6ECA5C72-A184-482A-A4AA-F7EDF9E58E98","uid":"000901000000000000040002","autoIdType":"exampleType","path":"/Ship001/Cont001/Pallet001/6ECA5C72-A184-482A-A4AA-F7EDF9E58E98/","itemCount":1,"movedDateTime":"2018-09-20T11:19:52.909301Z","individualRecognitionCode":"individualRecognitionCode","largeClassAggregationKey":"largeClassAggregationKey","middleClassAggregationKey":"middleClassAggregationKey","smallClassAggregationKey":"smallClassAggregationKey"}]}
+
+  ActualShipping:
+    type: "object"
+    description: "出荷実績データの情報"
+    properties:
+      tenantId:
+        type: "string"
+        description: "テナントID"
+      movementSlipNo:
+        type: "string"
+        description: "移動伝票番号"
+      baseId:
+        type: "string"
+        description: "拠点ID"
+      counterBaseId:
+        type: "string"
+        description: "対向拠点ID"  
+      items:
+        type: "array"
+        items:
+          $ref: "#/definitions/ActualShippingItem"
+          description: |
+            出荷実績のアイテムの情報  
+            出荷実績のアイテムがない場合は、この項目は空のリストが返されます。
+    example:
+      tenantId: "e95k6suc-bkd9-87fu-aa0o-fs346b7ah5cu"
+      movementSlipNo: "20181015000000000001"
+      baseId: "2114dbec-a137-11e8-9a80-ec21e50b3736"
+      counterBaseId: "458435f8-2e5c-444b-b828-6f25f35f3a40"
+      items:
+        - {"trackingId":"84FDDE3C-5EFA-474D-87AC-B77220683BD3","uid":"000901000000000000040001","autoIdType":"exampleType","path":"/Ship001/Cont001/Pallet001/84FDDE3C-5EFA-474D-87AC-B77220683BD3/","itemCount":1,"movedDateTime":"2018-09-20T11:19:52.909301Z","individualRecognitionCode":"individualRecognitionCode","largeClassAggregationKey":"largeClassAggregationKey","middleClassAggregationKey":"middleClassAggregationKey","smallClassAggregationKey":"smallClassAggregationKey"}
+        - {"trackingId":"6ECA5C72-A184-482A-A4AA-F7EDF9E58E98","uid":"000901000000000000040002","autoIdType":"exampleType","path":"/Ship001/Cont001/Pallet001/6ECA5C72-A184-482A-A4AA-F7EDF9E58E98/","itemCount":1,"movedDateTime":"2018-09-20T11:19:52.909301Z","individualRecognitionCode":"individualRecognitionCode","largeClassAggregationKey":"largeClassAggregationKey","middleClassAggregationKey":"middleClassAggregationKey","smallClassAggregationKey":"smallClassAggregationKey"}
+
+  ActualShippingItem:
+    type: object
+    description: "出荷実績のアイテムの情報"
+    properties:
+      trackingId:
+        type: "string"
+        description: "追跡ID"  
+      uid:
+        type: "string"
+        description: "UID"
+      autoIdType:
+        type: "string" 
+        description: "自動認識タイプ"
+      path:
+        type: "string"
+        description: |
+          格納パス  
+          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
+      itemCount:
+        type: "int64"
+        description: "アイテム数"
+      movedDateTime:
+        type: "string"
+        description: |
+          移動実績日時  
+            ISO8601拡張形式（UTC）にマイクロ秒（６桁）を加えた形式です。  
+            （YYYY-MM-DDThh:mm:ss.ffffffZ）
+      individualRecognitionCode:
+        type: "string"
+        description: "個品識別コード"
+      largeClassAggregationKey:
+        type: "string"
+        description: "大分類 集計キー"
+      middleClassAggregationKey:
+        type: "string"
+        description: "中分類 集計キー"
+      smallClassAggregationKey:
+        type: "string"
+        description: "小分類 集計キー"
+    example:
+      trackingId: "000901000000000000040000-001"
+      uid: "000901000000000000040000"
+      autoIdType: "exampleType"
+      path: "/Ship001/Cont001/Pallet001/000901000000000000040000-001/"
+      itemCount: 20
+      movedDateTime: "2019-06-26T04:37:20.399908Z"
+      individualRecognitionCode: "00084"
+      largeClassAggregationKey: "supplier case"
+      middleClassAggregationKey: "case type"
+      smallClassAggregationKey: "case size"
+
   InvalidParam:
     type: "object"
     required:
@@ -465,6 +568,8 @@ definitions:
                   \n |  | 複数アイテム混入エラー | 203 | there can be only one item in this request. |
                   \n |  | パス不一致エラー | 204 | item's path and targetPath inconsistency error. |
                   \n |  | リクエストサイズエラー | 205 | request is too large. |
+                  \n |  | 無効リクエストエラー | 206 | invalid json format. [{0}] |
+                  \n |  | 拠点ID不一致エラー | 207 | there is an inconsistency between api key and baseId. |
                   \n | 401 Unauthorized | その他の認証エラー | 800 | authorization failed. |
                   \n |  | JWTの有効期限切れエラー | 801 | jwt expired. |
                   \n |  | JWTのリクエスト日時のフォーマットエラー | 804 | requestDate is invalid format. |
@@ -551,24 +656,30 @@ definitions:
             | ffffff | マイクロ秒で 000000 から 999999 の値をとる。 |             
       individualRecognitionCode:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 150
         description: "個品識別コード"
       largeClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "大分類 集計キー " 
+        description: |
+          大分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       middleClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "中分類 集計キー"
+        description: |
+          中分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       smallClassAggregationKey:
         type: "string"
-        minLength: 1
+        minLength: 0
         maxLength: 50
-        description: "小分類 集計キー"
+        description: |
+          小分類 集計キー  
+          未設定の場合は""（空文字）を設定してください。
       isInactivated:
         type: "boolean"
         description: "無効化フラグ"
@@ -743,7 +854,7 @@ definitions:
         secretAccessKey: "xtzwg/8m5G9yXb7jh9g2EF9/4t6izdBakbQJyD9x"
         sessionToken: "abcd1234"
         expiration: "2019-08-15T0412:42:13Z"
-  InactivetrackingIds:
+  InactiveTrackingIdData:
       type: "object"
       description: "無効追跡IDリスト"
       properties:
@@ -765,3 +876,46 @@ definitions:
         urls: ["https://s3-ap-northeast-1.amazonaws.com/backet01/file01","https://s3-ap-northeast-1.amazonaws.com/backet01/file02"]
         cursor: "ew0K4oCdcHJldmlvdXNQcm9jZXNzVHlwZeKAnToxMjM1NjcsDQoicmVxdWVzdERhdGV0aW1lIjoiMjAxOC0wNi0wNVQwNDo1MDo0MFoiLA0KInByZXZpb3VzSUQiOjEyMzQ1LA0KImxhc3RFdmFsdWF0ZWRLZXkiOnsia2V5IjoxMjM0NTZ9DQp9DQoNCiA="
         hasNext: false
+  InactiveTrackingIds:
+    type: "object"
+    description: "無効追跡IDリストの出力ファイルの情報"
+    properties:
+      inactiveTrackingIds:
+        type: "array"
+        description: |
+          無効追跡IDのリスト  
+          データがない場合は、空のリストが返されます。
+        items:
+          $ref: "#/definitions/InactiveTrackingId"
+          description: "無効追跡IDの情報"
+    example:
+      inactiveTrackingIds: 
+        - {"trackingId":"84FDDE3C-5EFA-474D-87AC-B77220683BD3","inactivatedReasonCd":"1", "inactivatedUpdatedAt":"2018-09-25T12:30:00.423501Z"}
+        - {"trackingId":"6ECA5C72-A184-482A-A4AA-F7EDF9E58E98","inactivatedReasonCd":"2", "inactivatedUpdatedAt":"2018-09-25T08:15:10.613456Z"}
+  InactiveTrackingId:
+    type: object
+    description: "無効追跡IDの情報"
+    properties:
+      trackingId:
+        type: "string"
+        description: "追跡ID"  
+      inactivatedReasonCd:
+        type: "string"
+        description:  |
+          無効化理由コード  
+                       
+          | value | description |
+          | ------ | ------ |
+          | 1 | クライアントの指定による無効化 |
+          | 2 | UID重複による無効化 |
+          | 3 | 自動無効化経過日数(Item.autoInactive.elapsedDays)の経過による無効化 |
+      inactivatedUpdatedAt:
+        type: "string" 
+        description:  |
+          自動無効化アイテム更新日時  
+            ISO8601拡張形式（UTC）にマイクロ秒（６桁）を加えた形式です。  
+            （YYYY-MM-DDThh:mm:ss.ffffffZ）
+    example:
+      trackingId: "84FDDE3C-5EFA-474D-87AC-B77220683BD3"
+      inactivatedReasonCd: "1"
+      inactivatedUpdatedAt: "2018-09-25T12:30:00.423501Z"

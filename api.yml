@@ -568,6 +568,8 @@ definitions:
                   \n |  | 複数アイテム混入エラー | 203 | there can be only one item in this request. |
                   \n |  | パス不一致エラー | 204 | item's path and targetPath inconsistency error. |
                   \n |  | リクエストサイズエラー | 205 | request is too large. |
+                  \n |  | 無効リクエストエラー | 206 | invalid json format. [{0}] |
+                  \n |  | 拠点ID不一致エラー | 207 | there is an inconsistency between api key and baseId. |
                   \n | 401 Unauthorized | その他の認証エラー | 800 | authorization failed. |
                   \n |  | JWTの有効期限切れエラー | 801 | jwt expired. |
                   \n |  | JWTのリクエスト日時のフォーマットエラー | 804 | requestDate is invalid format. |

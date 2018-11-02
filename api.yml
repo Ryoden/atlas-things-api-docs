@@ -904,7 +904,7 @@ definitions:
                        
           | value | description |
           | ------ | ------ |
-          | 1 | クライアントの指定よる無効化 |
+          | 1 | クライアントの指定による無効化 |
           | 2 | UID重複による無効化 |
           | 3 | 自動無効化経過日数(Item.autoInactive.elapsedDays)の経過による無効化 |
       inactivatedUpdatedAt:

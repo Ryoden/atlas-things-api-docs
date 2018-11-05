@@ -564,17 +564,17 @@ definitions:
                   \n | 400 BadRequest | 入力チェックエラー | 100 | invalid input value. |
                   \n |  | 重複リクエスト登録エラー | 200 | the transactionId={0} has already been registered. |
                   \n |  | 入荷済みチェックエラー | 201 | the data has already been received at the next base. |
-                  \n |  | 他拠点入出荷データ更新不可エラー | 202 | the data of other bases can not be updated. [ movementType={0} , processType={1} ] |
+                  \n |  | 他拠点入出荷データ更新不可エラー | 202 | the specified movementSlipNo has already been used in other base. please specify different value for movementSlipNo. |
                   \n |  | 複数アイテム混入エラー | 203 | there can be only one item in this request. |
                   \n |  | パス不一致エラー | 204 | item's path and targetPath inconsistency error. |
-                  \n |  | リクエストサイズエラー | 205 | request is too large. |
+                  \n |  | リクエストサイズエラー | 205 | request is too large. please request's data size keep less than 10MB. |
                   \n |  | 無効リクエストエラー | 206 | invalid json format. [{0}] |
                   \n |  | 拠点ID不一致エラー | 207 | there is an inconsistency between api key and baseId. |
                   \n | 401 Unauthorized | その他の認証エラー | 800 | authorization failed. |
                   \n |  | JWTの有効期限切れエラー | 801 | jwt expired. |
                   \n |  | JWTのリクエスト日時のフォーマットエラー | 804 | requestDate is invalid format. |
-                  \n | 404 NotFound | リソース不存在エラー | 802 | resource not found. |
-                  \n | 429 Throttled | スロットリングエラー | 803 | request is too many. |
+                  \n | 404 NotFound | リソース不存在エラー | 802 | resource not found. please confirm request's path. |
+                  \n | 429 Throttled | スロットリングエラー | 803 | request is too many. please call API in a little while. |
                   \n | 500 InternalServerError | システムエラー | 900 | internal error has occurred. please call API in a little while. |
                   \n | 503 ServiceUnavailable | サービス停止エラー | 901 | system maintenance. |
                   \n \n

@@ -480,7 +480,11 @@ definitions:
     properties:
       trackingId:
         type: "string"
-        description: "追跡ID"  
+        description: |
+          追跡ID  
+          文字列「#」を指定した場合、既存の追跡IDがあれば特定して補完します。  
+          またこの場合、格納パスの末尾の階層も「#」となります。  
+          なお、「#」の指定は格納パスの末尾の階層にのみ設定可能です。
       uid:
         type: "string"
         description: "UID"

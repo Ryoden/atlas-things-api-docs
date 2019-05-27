@@ -485,7 +485,7 @@ definitions:
     properties:
       trackingId:
         type: "string"
-        description: "追跡ID"  
+        description: "追跡ID"
       uid:
         type: "string"
         description: "UID"
@@ -620,7 +620,9 @@ definitions:
         minLength: 1
         maxLength: 36
         format: ^[0-9A-Za-z\-]+$ 
-        description: "追跡ID"  
+        description: |
+          追跡ID  
+          「#」を指定すると、クラウドにて追跡IDを特定もしくは新規採番して補完します。
       uid:
         type: "string"
         minLength: 1
@@ -639,7 +641,9 @@ definitions:
         maxLength: 600
         description: |
           格納パス  
-          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
+          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。  
+          クラウドにて補完するために追跡IDに「#」を指定した場合、格納パスの末尾の階層にも「#」を指定してください。  
+          なお、「#」の指定は格納パスの末尾の階層にのみ可能です。
       itemCount:
         type: "int64"
         description: "アイテム数"

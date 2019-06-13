@@ -425,7 +425,7 @@ paths:
       responses:
         200:
           schema:
-            $ref: "#/definitions/latestMasterData"
+            $ref: "#/definitions/LatestMasterData"
           description: "成功時"
         400:
           schema:
@@ -976,7 +976,7 @@ definitions:
       trackingId: "84FDDE3C-5EFA-474D-87AC-B77220683BD3"
       inactivatedReasonCd: "1"
       inactivatedUpdatedAt: "2018-09-25T12:30:00.423501Z"
-  latestMasterData:
+  LatestMasterData:
       type: "object"
       description: "クライアントのシステムの最新マスタデータ"
       properties:

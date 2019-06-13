@@ -405,19 +405,19 @@ paths:
           description: "今回出力ポイントのカーソル情報"
           required: false
           type: "string"
-  /local/master:
+  /master/${masterName}:
     get:
-      summary: ローカルマスタデータ出力
+      summary: クライアントマスタデータ出力
       tags:
         - Others（その他）
       description: |
-        ローカルシステムの最新マスタデータダウンロード用URLを返却します。  
+        クライアントのシステムの最新マスタデータダウンロード用URLを返却します。  
         パラメータ:lastDownloadDate無しの場合は、初回のダウンロードとして最新マスタデータを返却します。  
 
         次回以降は、パラメータ:lastDownloadDateに日時を設定してリクエストすることで、指定した日時以降の最新マスタデータを取得できます。
           
-        レスポンスの取得後、ダウンロード用のURLにアクセスすることで、ローカルマスタデータ出力ファイルを取得できます。<br>
-        ローカルマスタデータ出力ファイルのフォーマットはUTF-8のCSVファイルです。内容については、<a href="#/definitions/localMasterData">localMasterData</a>を参照してください。<br>
+        レスポンスの取得後、ダウンロード用のURLにアクセスすることで、クライアントマスタデータ出力ファイルを取得できます。<br>
+        クライアントマスタデータ出力ファイルのフォーマットはUTF-8のCSVファイルです。<br>
         アクセス時は、ATLAS-Things APIの認証用ヘッダー情報(X-ATLAS-API-KeyとAuthorization)を付けずにGETメソッドでアクセスしてください。
           
         また、ダウンロード用URLの有効期限は1時間です。<br> 
@@ -425,14 +425,14 @@ paths:
       responses:
         200:
           schema:
-            $ref: "#/definitions/localMasterData"
+            $ref: "#/definitions/latestMasterData"
           description: "成功時"
         400:
           schema:
             $ref: "#/definitions/ProblemDetails"
           description: |
             入力チェックエラー (errorCode 100)  
-            無効対象マスタエラー (errorCode 208)
+            マスタ不存在エラー (errorCode 208)
         500:
           schema:
             $ref: "#/definitions/ProblemDetails"
@@ -445,7 +445,10 @@ paths:
           type: "string"
         - name: "lastDownloadDate"
           in: "query"
-          description: "最終出力日時"
+          description: |
+            最終出力日時  
+            ISO8601拡張形式（UTC）にマイクロ秒（６桁）を加えた形式です。  
+            （YYYY-MM-DDThh:mm:ss.ffffffZ）
           required: false
           type: "string"
 definitions:
@@ -973,14 +976,14 @@ definitions:
       trackingId: "84FDDE3C-5EFA-474D-87AC-B77220683BD3"
       inactivatedReasonCd: "1"
       inactivatedUpdatedAt: "2018-09-25T12:30:00.423501Z"
-  localMasterData:
+  latestMasterData:
       type: "object"
-      description: "ローカルシステムの最新マスタデータ"
+      description: "クライアントのシステムの最新マスタデータ"
       properties:
         url:
           type: "string"
           description: |
-            ローカルシステムの最新マスタデータダウンロード用のURL   
+            クライアントのシステムの最新マスタデータダウンロード用のURL   
             最新マスタデータがない場合は、NULLが返されます。
       example: 
         url: "https://s3-ap-northeast-1.amazonaws.com/backet01/download/tenant01/master01/20191205095136_master01.csv"

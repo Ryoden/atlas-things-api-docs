@@ -443,7 +443,7 @@ paths:
           description: "マスタ名"
           required: true
           type: "string"
-        - name: "lastDownloadDate"
+        - name: "lastDownloadDateTime"
           in: "query"
           description: |
             最終出力日時  

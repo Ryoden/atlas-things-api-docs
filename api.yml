@@ -113,7 +113,7 @@ info:
     リクエストとして定義されている項目が存在しない場合、エラー情報が返ります。
     
 
-host: api.atlas-things.io/
+host: api.atlas-things.io/v1/
 schemes:
   - https
 tags:

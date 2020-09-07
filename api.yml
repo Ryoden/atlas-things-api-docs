@@ -638,6 +638,14 @@ definitions:
                     {
                         'message': 'Forbidden'
                      }
+                    </pre>
+                 ※APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>  
+                 　その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>  
+                    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+                    HTTP status code 504 <br>
+                    {
+                        'message': 'Endpoint request timed out'
+                     }
                     </pre>"
     properties:
       title:

@@ -36,11 +36,10 @@ info:
     requestDateは、APIをリクエストしたシステム日時(ISO8601拡張形式の年月日時分秒までのUTC)を設定してください。<br>
     JWTの有効期限は1分間なので、リクエストの都度、設定することをお勧めします。
 
-    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 1em;">
+    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 5px;">
     {
       'requestDate': '2019-03-01T11:20:52Z'
-    }
-    </pre>
+    }</pre><br />
 
     生成したペイロードをbase64urlエンコードし、API Secretを鍵にしてJWTを生成します。<br>
     暗号化アルゴリズムは、HMAC SHA-256を指定してください。
@@ -48,7 +47,7 @@ info:
     **C#の場合のJWTの実装例**
 
     .Net FrameworkのパッケージマネージャであるNuGetにアクセスして、System.IdentityModel.Tokens.Jwtをインストールします。
-    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 1em;">
+    <pre style="background-color: #2d3134; color: #f8f8f8; padding: 5px;">
     using System;
     using System.IdentityModel;
 
@@ -78,8 +77,7 @@ info:
       // JWTの生成
       var secToken = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(header, payload);
       var jwt = handler.WriteToken(secToken);
-    }
-    </pre>
+    }</pre>
 
     <br />
 
@@ -122,7 +120,7 @@ info:
     APIのエンドポイントが正しくない場合、HTTP status codeは403(Forbidden)になります。<br/>
     その場合後述するエラーレスポンスではなく、下記のようにmessageのみが返ります。<br/>
 
-    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 5px;'>
     {
       'message': 'Forbidden'
     }</pre><br />
@@ -131,7 +129,7 @@ info:
 
     APIで問題が発生した場合、HTTP status codeは500(Internal Server Error)になります。<br>
     その場合後述するエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
-    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 5px;'>
     {
       'message': 'Internal Server Error'
     }</pre><br />
@@ -143,7 +141,7 @@ info:
 
     APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>
     その場合後述するエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
-    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 5px;'>
     {
       'message': 'Endpoint request timed out'
     }</pre><br />

@@ -663,6 +663,8 @@ definitions:
                         'message': 'Internal Server Error'
                     }
                     </pre>
+                    これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
+                    少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
                  ※APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>  
                  　その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>  
                     <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
@@ -670,7 +672,10 @@ definitions:
                     {
                         'message': 'Endpoint request timed out'
                      }
-                    </pre>"
+                    </pre>
+                    これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
+                    少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
+                    "
     properties:
       title:
         type: "string"

@@ -125,8 +125,7 @@ info:
     <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
     {
       'message': 'Forbidden'
-    }
-    </pre>
+    }</pre><br />
 
     **500(Internal Server Error)**
 
@@ -135,8 +134,7 @@ info:
     <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
     {
       'message': 'Internal Server Error'
-    }
-    </pre>
+    }</pre><br />
 
     これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
     少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
@@ -148,8 +146,7 @@ info:
     <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
     {
       'message': 'Endpoint request timed out'
-    }
-    </pre>
+    }</pre><br />
 
     これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
     少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。

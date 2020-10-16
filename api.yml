@@ -653,7 +653,15 @@ definitions:
                     HTTP status code 403 <br>
                     {
                         'message': 'Forbidden'
-                     }
+                    }
+                    </pre>
+                 ※APIで問題が発生した場合、HTTP status codeは500(Internal Server Error)になります。<br>  
+                 　その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>  
+                    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+                    HTTP status code 504 <br>
+                    {
+                        'message': 'Internal Server Error'
+                    }
                     </pre>
                  ※APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>  
                  　その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>  

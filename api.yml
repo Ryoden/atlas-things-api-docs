@@ -113,6 +113,47 @@ info:
     必須でない項目で設定が不要な場合は、値にNULLを設定してください。<br>
     リクエストとして定義されている項目が存在しない場合、エラー情報が返ります。
 
+    ---
+    #### **例外的なHTTPステータス**
+    本サービスでは規定のHTTPステータス以外のレスポンスが返ることがあります。
+
+    **403(Forbidden)**
+    APIのエンドポイントが正しくない場合、HTTP status codeは403(Forbidden)になります。<br/>
+    その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br/>
+
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    HTTP status code 403 <br>
+    {
+    'message': 'Forbidden'
+    }
+    </pre>
+
+    **500(Internal Server Error)**
+    APIで問題が発生した場合、HTTP status codeは500(Internal Server Error)になります。<br>
+    その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    HTTP status code 504 <br>
+    {
+    'message': 'Internal Server Error'
+    }
+    </pre>
+
+    これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
+    少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
+
+    **504(Gateway Timeout)**
+    APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>
+    その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
+    HTTP status code 504 <br>
+    {
+    'message': 'Endpoint request timed out'
+    }
+    </pre>
+
+    これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
+    少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
+
 host: api.atlas-things.io/v1/
 schemes:
   - https
@@ -688,36 +729,7 @@ definitions:
       \n | 429 Throttled | スロットリングエラー | 803 | request is too many. please call API in a little while. |
       \n | 500 InternalServerError | システムエラー | 900 | internal error has occurred. please call API in a little while. |
       \n | 503 ServiceUnavailable | サービス停止エラー | 901 | system maintenance. |
-      \n \n
-      ※APIのエンドポイントが正しくない場合、HTTP status codeは403(Forbidden)になります。<br>
-      その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
-      <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
-      HTTP status code 403 <br>
-      {
-      'message': 'Forbidden'
-      }
-      </pre>
-      ※APIで問題が発生した場合、HTTP status codeは500(Internal Server Error)になります。<br>
-      その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
-      <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
-      HTTP status code 504 <br>
-      {
-      'message': 'Internal Server Error'
-      }
-      </pre>
-      これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
-      少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
-      ※APIがタイムアウトした場合、HTTP status codeは504(Gateway Timeout)になります。<br>
-      その場合、上記のフォーマットのエラーレスポンスではなく、下記のようにmessageのみが返ります。<br>
-      <pre style='background-color: #2d3134; color: #f8f8f8; padding: 1em;'>
-      HTTP status code 504 <br>
-      {
-      'message': 'Endpoint request timed out'
-      }
-      </pre>
-      これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
-      少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
-      "
+      \n \n"
     properties:
       title:
         type: "string"

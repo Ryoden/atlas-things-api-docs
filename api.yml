@@ -6,7 +6,7 @@ info:
   contact:
     email: contact@atlas-things.jp
   title: ATLAS-Things API v1 リファレンス
-  version: v18.10
+  version: v20.12
   description: |
     このページでは、ATLAS-Things APIの仕様詳細について記載しています。
 
@@ -14,7 +14,7 @@ info:
     #### **ATLAS-Things APIとは**
 
     ATLAS-Things APIを使うことで、各種入出荷実績を記録・管理することができます。 
-    API機能として入出荷実績データの登録・削除・出力、ログ収集などを保持しています。
+    API機能として入出荷実績データの登録・出力、ログ収集などを保持しています。
 
     ---
     #### **ATLAS-Things APIご利用開始方法**
@@ -163,7 +163,7 @@ tags:
   - name: Receiving（入荷）
     description: 入荷情報の個別登録と一括登録を提供します。
   - name: Others（その他）
-    description: データの削除と出力、クレデンシャル発行および無効化された追跡IDリスト出力を提供します。
+    description: 出荷実績データの出力、クレデンシャル発行および無効化された追跡IDリスト出力を提供します。
 paths:
   /shipping/item:
     post:
@@ -299,59 +299,6 @@ paths:
           description: "登録対象のリクエスト情報"
           required: true
           schema: { $ref: "#/definitions/RegistrationRequest" }
-  /shipping/items/delete:
-    post:
-      summary: 出荷情報削除
-      tags:
-        - Others（その他）
-      description: "指定された格納パスの出荷実績データを削除します。"
-      responses:
-        204:
-          description: "成功時"
-        400:
-          schema:
-            $ref: "#/definitions/ProblemDetails"
-          description: |
-            入力チェックエラー (errorCode 100)  
-            重複リクエスト登録エラー (errorCode 200)  
-            入荷済みチェックエラー (errorCode 201)  
-            他拠点入出荷データ更新不可エラー (errorCode 202)
-        500:
-          schema:
-            $ref: "#/definitions/ProblemDetails"
-          description: "システムエラー (errorCode 900)  "
-      parameters:
-        - name: "file"
-          in: "body"
-          description: "削除対象のリクエスト情報"
-          required: true
-          schema: { $ref: "#/definitions/DeleteRequest" }
-  /receiving/items/delete:
-    post:
-      summary: 入荷情報削除
-      tags:
-        - Others（その他）
-      description: "指定された格納パスの入荷実績データを削除します。"
-      responses:
-        204:
-          description: "成功時"
-        400:
-          schema:
-            $ref: "#/definitions/ProblemDetails"
-          description: |
-            入力チェックエラー (errorCode 100)  
-            重複リクエスト登録エラー (errorCode 200)  
-            他拠点入出荷データ更新不可エラー (errorCode 202)
-        500:
-          schema:
-            $ref: "#/definitions/ProblemDetails"
-          description: "システムエラー (errorCode 900)  "
-      parameters:
-        - name: "file"
-          in: "body"
-          description: "削除対象のリクエスト情報"
-          required: true
-          schema: { $ref: "#/definitions/DeleteRequest" }
   /items/download:
     get:
       summary: 出荷実績データ出力
@@ -959,44 +906,6 @@ definitions:
               },
           },
         ]
-  DeleteRequest:
-    type: object
-    description: "削除のリクエスト"
-    properties:
-      transactionId:
-        type: "string"
-        minLength: 36
-        maxLength: 36
-        format: ^[0-9A-Za-z\-]+$
-        description: |
-          トランザクションID  
-          クライアントからのリクエストを識別するためのID。  
-          1リクエスト毎に一意となる値を設定してください。  
-          ※ 推奨値：UUID
-      movementSlipNo:
-        type: "string"
-        minLength: 20
-        maxLength: 20
-        format: ^[0-9A-Za-z]+$
-        description: "移動伝票番号"
-      targetPaths:
-        type: "array"
-        minLength: 1
-        maxLength: 600
-        description: |
-          削除対象の格納位置情報リスト  
-          階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
-        items:
-          type: "string"
-          description: "削除対象の格納位置情報"
-    required:
-      - transactionId
-      - movementSlipNo
-      - targetPaths
-    example:
-      transactionId: "bf7d0aa8-537c-4e4c-80a0-6b6451f59abb"
-      movementSlipNo: "78964456306232651242"
-      targetPaths: ["/111/222/333/", "/444/555/666/"]
   Credentials:
     type: "object"
     description: "認証情報"

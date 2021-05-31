@@ -797,6 +797,82 @@ definitions:
             description: "自動無効化経過日数"
         required:
           - isAutoInactivated
+      detail:
+        type: "object"
+        description: "アイテム詳細"
+        properties:
+          link_id:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携ID"
+          link_code1:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード1"
+          link_code2:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード2"
+          link_code3:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード3"
+          category1:
+            type: "string"
+            maxLength: 36
+            description: "分類1"
+          category2:
+            type: "string"
+            maxLength: 36
+            description: "分類2"
+          category3:
+            type: "string"
+            maxLength: 36
+            description: "分類3"
+          category4:
+            type: "string"
+            maxLength: 36
+            description: "分類4"
+          category5:
+            type: "string"
+            maxLength: 36
+            description: "分類5"
+          attribute1:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性1"
+          attribute2:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性2"
+          attribute3:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性3"
+          attribute4:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性4"
+          attribute5:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性5"
+          attribute6:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性6"
+          attribute7:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性7"
+          attribute8:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性8"
+          attribute9:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性9"
     required:
       - trackingId
       - autoIdType

@@ -6,7 +6,7 @@ info:
   contact:
     email: contact@atlas-things.jp
   title: ATLAS-Things API v1 リファレンス
-  version: v20.12
+  version: v21.06
   description: |
     このページでは、ATLAS-Things APIの仕様詳細について記載しています。
 
@@ -605,6 +605,81 @@ definitions:
       smallClassAggregationKey:
         type: "string"
         description: "小分類 集計キー"
+      detail:
+        type: object
+        properties:
+          link_id:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携ID"
+          link_code1:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード1"
+          link_code2:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード2"
+          link_code3:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード3"
+          category1:
+            type: "string"
+            maxLength: 36
+            description: "分類1"
+          category2:
+            type: "string"
+            maxLength: 36
+            description: "分類2"
+          category3:
+            type: "string"
+            maxLength: 36
+            description: "分類3"
+          category4:
+            type: "string"
+            maxLength: 36
+            description: "分類4"
+          category5:
+            type: "string"
+            maxLength: 36
+            description: "分類5"
+          attribute1:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性1"
+          attribute2:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性2"
+          attribute3:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性3"
+          attribute4:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性4"
+          attribute5:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性5"
+          attribute6:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性6"
+          attribute7:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性7"
+          attribute8:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性8"
+          attribute9:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性9"
     example:
       trackingId: "000901000000000000040000-001"
       uid: "000901000000000000040000"
@@ -748,7 +823,9 @@ definitions:
         type: "string"
         minLength: 0
         maxLength: 150
-        description: "個品識別コード"
+        description: |
+          個品識別コード
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       largeClassAggregationKey:
         type: "string"
         minLength: 0
@@ -756,6 +833,7 @@ definitions:
         description: |
           大分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       middleClassAggregationKey:
         type: "string"
         minLength: 0
@@ -763,6 +841,7 @@ definitions:
         description: |
           中分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       smallClassAggregationKey:
         type: "string"
         minLength: 0
@@ -770,6 +849,7 @@ definitions:
         description: |
           小分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       isInactivated:
         type: "boolean"
         description: "無効化フラグ"
@@ -792,15 +872,88 @@ definitions:
             description: "自動無効化経過日数"
         required:
           - isAutoInactivated
+      detail:
+        type: "object"
+        description: "アイテム詳細"
+        properties:
+          link_id:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携ID"
+          link_code1:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード1"
+          link_code2:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード2"
+          link_code3:
+            type: "string"
+            maxLength: 36
+            description: "外部システム連携コード3"
+          category1:
+            type: "string"
+            maxLength: 36
+            description: "分類1"
+          category2:
+            type: "string"
+            maxLength: 36
+            description: "分類2"
+          category3:
+            type: "string"
+            maxLength: 36
+            description: "分類3"
+          category4:
+            type: "string"
+            maxLength: 36
+            description: "分類4"
+          category5:
+            type: "string"
+            maxLength: 36
+            description: "分類5"
+          attribute1:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性1"
+          attribute2:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性2"
+          attribute3:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性3"
+          attribute4:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性4"
+          attribute5:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性5"
+          attribute6:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性6"
+          attribute7:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性7"
+          attribute8:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性8"
+          attribute9:
+            type: "string"
+            maxLength: 36
+            description: "アイテム属性9"
     required:
       - trackingId
       - autoIdType
       - path
       - itemCount
       - movedDateTime
-      - largeClassAggregationKey
-      - middleClassAggregationKey
-      - smallClassAggregationKey
       - autoInactive
     example:
       trackingId: "000901000000000000040000-001"

@@ -748,7 +748,9 @@ definitions:
         type: "string"
         minLength: 0
         maxLength: 150
-        description: "個品識別コード"
+        description: |
+          個品識別コード
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       largeClassAggregationKey:
         type: "string"
         minLength: 0
@@ -756,6 +758,7 @@ definitions:
         description: |
           大分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       middleClassAggregationKey:
         type: "string"
         minLength: 0
@@ -763,6 +766,7 @@ definitions:
         description: |
           中分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       smallClassAggregationKey:
         type: "string"
         minLength: 0
@@ -770,6 +774,7 @@ definitions:
         description: |
           小分類 集計キー  
           未設定の場合は""（空文字）を設定してください。
+          ※将来的に廃止される予定です。 detail プロパティを使用してください。
       isInactivated:
         type: "boolean"
         description: "無効化フラグ"
@@ -798,9 +803,6 @@ definitions:
       - path
       - itemCount
       - movedDateTime
-      - largeClassAggregationKey
-      - middleClassAggregationKey
-      - smallClassAggregationKey
       - autoInactive
     example:
       trackingId: "000901000000000000040000-001"

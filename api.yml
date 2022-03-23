@@ -611,19 +611,19 @@ definitions:
       detail:
         type: object
         properties:
-          link_id:
+          linkId:
             type: "string"
             maxLength: 36
             description: "外部システム連携ID"
-          link_code1:
+          linkCode1:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード1"
-          link_code2:
+          linkCode2:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード2"
-          link_code3:
+          linkCode3:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード3"
@@ -881,19 +881,19 @@ definitions:
         type: "object"
         description: "アイテム詳細"
         properties:
-          link_id:
+          linkId:
             type: "string"
             maxLength: 36
             description: "外部システム連携ID"
-          link_code1:
+          linkCode1:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード1"
-          link_code2:
+          linkCode2:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード2"
-          link_code3:
+          linkCode3:
             type: "string"
             maxLength: 36
             description: "外部システム連携コード3"

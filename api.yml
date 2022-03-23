@@ -149,7 +149,8 @@ info:
     これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
     少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
 
-host: api.atlas-things.io/v1/
+host: api.atlas-things.io
+basePath: /v1
 schemes:
   - https
 tags:
@@ -585,7 +586,8 @@ definitions:
           格納パス  
           階層化した複数のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
       itemCount:
-        type: "int64"
+        type: integer
+        format: int64
         description: "アイテム数"
       movedDateTime:
         type: "string"
@@ -801,7 +803,8 @@ definitions:
           クラウドにて補完するために追跡IDに「#」を指定した場合、格納パスの末尾の階層にも「#」を指定してください。  
           なお、「#」の指定は格納パスの末尾の階層にのみ可能です。
       itemCount:
-        type: "int64"
+        type: integer
+        format: int64
         description: "アイテム数"
       movedDateTime:
         type: "string"
@@ -868,7 +871,8 @@ definitions:
               自動無効化対象パス   
               自動無効化対象のItem.trackingIdを「/」で連結し、先頭および末尾に「/」を追加したものです。
           elapsedDays:
-            type: "int64"
+            type: integer
+            format: int64
             description: "自動無効化経過日数"
         required:
           - isAutoInactivated

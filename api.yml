@@ -149,6 +149,20 @@ info:
     これは本サービスの問題ではなく、クラウドプラットフォームの一時的な問題です。
     少し時間をおいてからリトライしてください。複数回同じステータスになる場合はお問い合わせください。
 
+    ---
+    #### **メンテナンスについて**
+    本サービスがメンテナンス中の場合、すべての API リクエストで HTTP ステータス 503 が返ります。
+    一定時間経過後にリトライするようにしてください。
+
+    <pre style='background-color: #2d3134; color: #f8f8f8; padding: 5px;'>
+    {
+      'title': 'ServiceUnavailable',
+      'errorCode': '901',
+      'detail': 'system maintenance.',
+      'traceId': '',
+      'invalidParams': []
+    }</pre><br />
+
 host: api.atlas-things.io
 basePath: /v1
 schemes:
